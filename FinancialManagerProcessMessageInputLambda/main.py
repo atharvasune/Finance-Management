@@ -37,6 +37,14 @@ def parseMessage(message: str):
                     "transaction_date": {
                         "type": "string",
                         "description": "Represents the date of the transaction in a DD/MM/YYYY format"
+                    },
+                    "receiver": {
+                        "type": "string",
+                        "description": "If available then receiver of the transaction else an empty string"
+                    },
+                    "sent_from": {
+                        "type": "string",
+                        "description": "If available a description of which account / source this transaction has been done else an empty string"
                     }
                 }
             },
@@ -48,7 +56,18 @@ def parseMessage(message: str):
 
 
 def handle_event(event: events.APIGatewayProxyEventV2, context: context_.Context):
-    message = event["message"]
+    if event.get("body", None) is not None:
+        message = json.loads(event["body"]).get("message", None)
+    elif event.get("message") is not None:
+        message = event["message"]
+    else:
+        message = None
+    if message is None:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({"message": "no message provided"})
+        }
+    
     response = parseMessage(message)
     if (response.get("transaction_message", False)) :
         return {
