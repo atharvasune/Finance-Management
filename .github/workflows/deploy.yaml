@@ -17,4 +17,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
       - run: zip -j FinancialManagerProcessMessageInputLambda.zip ./FinancialManagerProcessMessageInputLambda/lambda_function.py
-      - run: aws lambda update-function-code --function-name= ${{vars.FinancialManagerProcessMessageInputLambdaARN}} --zip-file=fileb://FinancialManagerProcessMessageInputLambda.zip
+      - run: aws lambda update-function-code --function-name=${{vars.FinancialManagerProcessMessageInputLambdaARN}} --zip-file=fileb://FinancialManagerProcessMessageInputLambda.zip
