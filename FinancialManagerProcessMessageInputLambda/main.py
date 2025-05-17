@@ -49,10 +49,11 @@ def parseMessage(message: str):
 
 def handle_event(event: events.APIGatewayProxyEventV2, context: context_.Context):
     message = event["message"]
-    if (message.get("transaction_message", False)) :
+    response = parseMessage(message)
+    if (response.get("transaction_message", False)) :
         return {
             'statusCode': 200,
-            'body': parseMessage(message)
+            'body': response
         }
     else:
         return {
