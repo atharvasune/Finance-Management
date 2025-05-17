@@ -18,5 +18,5 @@ jobs:
           aws-region: eu-north-1
       - run: pip install -r requirements.txt -t target/
       - run: cd target && zip -r ../FinancialManagerProcessMessageInputLambda.zip .
-      - run: zip -j FinancialManagerProcessMessageInputLambda.zip ./FinancialManagerProcessMessageInputLambda/lambda_function.py
+      - run: zip -j FinancialManagerProcessMessageInputLambda.zip ./FinancialManagerProcessMessageInputLambda/main.py
       - run: aws lambda update-function-code --function-name=${{vars.FinancialManagerProcessMessageInputLambdaARN}} --zip-file=fileb://FinancialManagerProcessMessageInputLambda.zip
