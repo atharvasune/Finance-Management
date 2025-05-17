@@ -1,8 +1,9 @@
 import json
+import os
 from aws_lambda_typing import context as context_, events
 from google import genai
 
-gemini_client = genai.Client()
+gemini_client = genai.Client(api_key = os.getenv("GEMINI_API_KEY"))
 
 def parseMessage(message: str):
     response = gemini_client.models.generate_content(
@@ -25,11 +26,12 @@ def parseMessage(message: str):
                         "description": "Whether the current message denotes a transaction that has been completed",
                     },
                     "transaction_type": {
+                        "type": "string",
                         "enum": ["credit", "debit"],
                         "description": "If message is a transaction message denotes whether its a debit transaction or a credit transaction",
                     },
                     "transaction_amount": {
-                        "type": "float",
+                        "type": "number",
                         "description": "If a transaction message, then represents the amount of transaction"
                     },
                     "transaction_date": {
@@ -46,8 +48,14 @@ def parseMessage(message: str):
 
 
 def handle_event(event: events.APIGatewayProxyEventV2, context: context_.Context):
-    message = event["body"]["message"]
-    return {
-        'statusCode': 200,
-        'body': parseMessage(message)
-    }
+    message = event["message"]
+    if (message.get("transaction_message", False)) :
+        return {
+            'statusCode': 200,
+            'body': parseMessage(message)
+        }
+    else:
+        return {
+            'statusCode': 200,
+            'body': json.dumps({"message", "not a transaction message"})
+        }

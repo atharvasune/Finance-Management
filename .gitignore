@@ -1,1 +1,3 @@
 expense-monitor/
+target/
+*.zip
