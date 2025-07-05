@@ -42,6 +42,16 @@ def ensure_month_sheet_exists(service, spreadsheet_id, month_name):
         }
         service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=add_sheet_body).execute()
 
+        header_row = [
+            ["Date", "Type", "Amount", "Receiver", "Sent From", "Is Transaction?"]
+        ]
+        service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_id,
+            range=f"{month_name}!A1",
+            valueInputOption="USER_ENTERED",
+            body={"values": header_row}
+        ).execute()
+
 def get_creds():
     creds_data = json.loads(os.environ['SHEETS_CREDS'])
     creds = Credentials.from_authorized_user_info(creds_data)
