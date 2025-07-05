@@ -17,3 +17,16 @@ jobs:
       - run: cd target && zip -r ../FinancialManagerProcessMessageInputLambda.zip .
       - run: zip -j FinancialManagerProcessMessageInputLambda.zip ./FinancialManagerProcessMessageInputLambda/main.py
       - run: aws lambda update-function-code --function-name=${{vars.FinancialManagerProcessMessageInputLambdaARN}} --zip-file=fileb://FinancialManagerProcessMessageInputLambda.zip
+  lambda2:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: eu-north-1
+      - run: "pip install --platform manylinux2014_x86_64 -r requirements.txt --implementation cp --only-binary=:all: -t target/"
+      - run: cd target && zip -r ../FinancialManagerSheetsLambda.zip .
+      - run: zip -j FinancialManagerSheetsLambda.zip ./FinancialManagerSheetsLambda/main.py
+      - run: aws lambda update-function-code --function-name=${{vars.FinancialManagerSheetsLambdaARN}} --zip-file=fileb://FinancialManagerSheetsLambda.zip
