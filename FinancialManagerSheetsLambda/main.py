@@ -75,6 +75,12 @@ def handle_event(event: events.APIGatewayProxyEventV2, context: context_.Context
                 'body': json.dumps({"message": "no body provided"})
             }
         
+        if body.get("secret", "Not a valid Secret") != os.environ("PERSONAL_SECRET"):
+            return {
+                'statusCode': 403,
+                'body': f"Access Denied {os.environ("EXTRA_MESSAGE", "")}"
+            }
+        
         if (body.get("transaction_message", False)) :
             creds = get_creds()
             service = build("sheets", "v4", credentials=creds)

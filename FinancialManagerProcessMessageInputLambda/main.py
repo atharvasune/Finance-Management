@@ -61,11 +61,26 @@ def parseMessage(message: str):
 def handle_event(event: events.APIGatewayProxyEventV2, context: context_.Context):
     try:
         if event.get("body", None) is not None:
-            message = json.loads(event["body"]).get("message", None)
-        elif event.get("message") is not None:
-            message = event["message"]
+            body = json.loads(event["body"])
+        elif event.get("body") is not None:
+            body = json.loads(event["body"])
         else:
-            message = None
+            body = None
+        
+        if body is None:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({"message": "no valid body provided"})
+            }
+        
+        if body.get("secret", "Not a valid Secret") != os.environ("PERSONAL_SECRET"):
+            return {
+                'statusCode': 403,
+                'body': f"Access Denied {os.environ("EXTRA_MESSAGE", "")}"
+            }
+        
+        message = body.get("message", None)
+
         if message is None:
             return {
                 'statusCode': 400,
